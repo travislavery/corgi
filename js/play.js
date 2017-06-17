@@ -1,29 +1,91 @@
-
+var platforms;
+var ground;
+var corgi;
+var leftArrow;
+var rightArrow;
+var downArrow;
+var upArrow;
+var growl;
+var bark;
+var yawn;
+var eKey;
+var qKey;
+var fKey;
+var distance;
 
 var playState={
 	create: function(){
 
 		game.add.sprite(0, 0, 'backgroundPark');
-		game.add.sprite(0, game.world.height - 238, 'ground')
+		platforms = game.add.group();
+		platforms.enableBody = true;
+		//ground = platforms.create(0, game.world.height - 1, 'ground')
+		//ground.body.immovable = true;
+
+		corgi = game.add.sprite(100, game.world.height - 50, 'corgiChar');
+		corgi.anchor.setTo(0.5,0.5);
+		corgi.enableBody = true;
+		corgi.inputEnabled = true;
+		game.physics.arcade.enable(corgi);
+		corgi.collideWorldBounds = true;
+		//corgi.body.gravity.y = 300;
+		corgi.body.bounce.y = 0.3;
+		corgi.animations.add('down', [1,0,1,2], 10, true);
+		corgi.animations.add('left', [5,4,5,6], 10, true);
+		corgi.animations.add('right', [10,9,10,11], 10, true);
+		corgi.animations.add('up', [13,12,13,14], 10, true);
 		
 		cursors = game.input.keyboard.createCursorKeys();
 		game.input.mouse.capture = true;
-
-
-		leftArrow = this.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-		rightArrow = this.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-		downArrow = this.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-		upArrow = this.input.keyboard.addKey(Phaser.Keyboard.UP);
+		leftArrow = this.input.keyboard.addKey(Phaser.Keyboard.A);
+		rightArrow = this.input.keyboard.addKey(Phaser.Keyboard.D);
+		downArrow = this.input.keyboard.addKey(Phaser.Keyboard.S);
+		upArrow = this.input.keyboard.addKey(Phaser.Keyboard.W);
+		eKey = this.input.keyboard.addKey(Phaser.Keyboard.E);
+		qKey = this.input.keyboard.addKey(Phaser.Keyboard.Q);
+		fKey = this.input.keyboard.addKey(Phaser.Keyboard.F);
 		right = game.input.activePointer.rightButton;
 		left = game.input.activePointer.leftButton;
 		spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    	spaceKey.onDown.add(togglePause, this);
+    	qKey.onDown.add(bark, this);
+    	eKey.onDown.add(growl, this);
+    	fKey.onDown.add(yawn, this);
 	},
 	update: function(){
-		
-		game.physics.arcade.collide(star, platforms);
-		game.physics.arcade.overlap(redBubbles, redCeiling, popBubbleR, null, this);
-		
+		distance = (corgi.y);
+		movement();
+		game.physics.arcade.collide(corgi, platforms);
+		//game.physics.arcade.overlap(redBubbles, redCeiling, popBubbleR, null, this);
+		corgi.scale.set(distance/500);
+	}		
 }
 
-
+function movement() {
+	if (leftArrow.isDown) {
+		corgi.body.velocity.x = -distance/.9;
+		corgi.animations.play('left');
+	} else if (rightArrow.isDown) {
+		corgi.body.velocity.x = distance/.9;
+		corgi.animations.play('right');
+	} else if (upArrow.isDown) {
+		corgi.body.velocity.y = -distance/.9;
+		corgi.animations.play('up');
+	} else if (downArrow.isDown) {
+		corgi.body.velocity.y = distance/.9;
+		corgi.animations.play('down');
+	} else {
+		corgi.body.velocity.x = 0;
+		corgi.body.velocity.y = 1;
+		corgi.animations.stop();
+		corgi.frame = 1;
+	}
+}
+function bark() {
+	game.sound.play('bark');
+}
+function growl() {
+	game.sound.play('growl');
+}
+function yawn() {
+	game.sound.play('yawn');
+}
