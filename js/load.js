@@ -2,6 +2,7 @@ var loadState={
 	preload: function() {
 		var loadingLabel = game.add.text(80, 150, 'loading...', {font: '30px Courier', fill: '#ffffff'});
 		game.load.image('backgroundPark', 'assets/maps/park.jpg');
+		game.load.image('backgroundTiger', 'assets/maps/tiger2.png');
 		game.load.image('ground', 'assets/images/platform.png');
 		game.load.spritesheet('corgiChar','assets/sprites/corgi2.png',199.25,174.5);
 		//game.load.audio('zeldaFTW', 'assets/music/lozow.mp3');

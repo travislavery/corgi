@@ -11,6 +11,7 @@ var yawn;
 var eKey;
 var qKey;
 var fKey;
+var pKey;
 var distance;
 
 var playState={
@@ -44,22 +45,33 @@ var playState={
 		eKey = this.input.keyboard.addKey(Phaser.Keyboard.E);
 		qKey = this.input.keyboard.addKey(Phaser.Keyboard.Q);
 		fKey = this.input.keyboard.addKey(Phaser.Keyboard.F);
+		pKey = this.input.keyboard.addKey(Phaser.Keyboard.P);
 		right = game.input.activePointer.rightButton;
 		left = game.input.activePointer.leftButton;
 		spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     	qKey.onDown.add(bark, this);
     	eKey.onDown.add(growl, this);
     	fKey.onDown.add(yawn, this);
+    	
 	},
 	update: function(){
+		console.log('hey there');
 		distance = (corgi.y);
 		movement();
 		game.physics.arcade.collide(corgi, platforms);
 		//game.physics.arcade.overlap(redBubbles, redCeiling, popBubbleR, null, this);
 		corgi.scale.set(distance/500);
+		corgWrap(corgi);
+		pKey.onDown.add(toPlatform, this);
 	}		
 }
-
+function corgWrap(object) {
+	if (object.body.x > 1280){
+		object.body.x = -20;
+	} else if (object.body.x < -20) {
+		object.body.x = 1280;
+	}
+}
 function movement() {
 	if (leftArrow.isDown) {
 		corgi.body.velocity.x = -distance/.9;
@@ -88,4 +100,7 @@ function growl() {
 }
 function yawn() {
 	game.sound.play('yawn');
+}
+function toPlatform() {
+	this.game.state.start('platform');
 }
