@@ -6,5 +6,6 @@ game.state.add('title', titleState);
 game.state.add('play', playState);
 //game.state.add('loadPlatform', loadPlatform);
 game.state.add('platform', platform);
+//game.state.add('flappyCorg', flapState);
 
 game.state.start('boot');

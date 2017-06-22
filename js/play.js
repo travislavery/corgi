@@ -13,17 +13,19 @@ var qKey;
 var fKey;
 var pKey;
 var distance;
+var normalize;
 
 var playState={
 	create: function(){
-
-		game.add.sprite(0, 0, 'backgroundPark');
 		platforms = game.add.group();
 		platforms.enableBody = true;
+		var upperBound = platforms.create(0, 160, 'longPlat');
+		upperBound.body.immovable=true;
+		game.add.sprite(0, 0, 'backgroundPark');
+		
 		//ground = platforms.create(0, game.world.height - 1, 'ground')
 		//ground.body.immovable = true;
-
-		corgi = game.add.sprite(100, game.world.height - 50, 'corgiChar');
+		corgi = game.add.sprite(100, game.world.height-10, 'corgiChar');
 		corgi.anchor.setTo(0.5,0.5);
 		corgi.enableBody = true;
 		corgi.inputEnabled = true;
@@ -55,7 +57,7 @@ var playState={
     	
 	},
 	update: function(){
-		console.log('hey there');
+		console.log(Math.floor(corgi.y) + ',' + Math.floor(corgi.x));//corgi.scale);
 		distance = (corgi.y);
 		movement();
 		game.physics.arcade.collide(corgi, platforms);
@@ -63,6 +65,7 @@ var playState={
 		corgi.scale.set(distance/500);
 		corgWrap(corgi);
 		pKey.onDown.add(toPlatform, this);
+		swapMap0(corgi);
 	}		
 }
 function corgWrap(object) {
@@ -71,6 +74,9 @@ function corgWrap(object) {
 	} else if (object.body.x < -20) {
 		object.body.x = 1280;
 	}
+	if (object.body.y > 1203){
+		object.body.y = 900;
+	} 
 }
 function movement() {
 	if (leftArrow.isDown) {
@@ -100,7 +106,15 @@ function growl() {
 }
 function yawn() {
 	game.sound.play('yawn');
+	corgi.animations.stop();
+	corgi.frame=3;
 }
 function toPlatform() {
 	this.game.state.start('platform');
+}
+
+function swapMap0(character) {
+	if (character.x <= 200 && character.y <= 275) {
+		this.game.state.start('platform');
+	}
 }
