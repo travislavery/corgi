@@ -99,7 +99,7 @@ function movement2() {
 		corgi.body.velocity.x = -300;
 		corgi.animations.play('left');
 		directionLR = 1;
-	} else if (rightArrow.isDown) {
+	} else if (rightArrow.isDown) {                             
 		corgi.body.velocity.x = 300;
 		corgi.animations.play('right');
 		directionLR = 0;

@@ -14,6 +14,8 @@ var fKey;
 var pKey;
 var distance;
 var normalize;
+var squirrel;
+var squirrels;
 
 var playState={
 	create: function(){
@@ -38,6 +40,11 @@ var playState={
 		corgi.animations.add('right', [10,9,10,11], 10, true);
 		corgi.animations.add('up', [13,12,13,14], 10, true);
 		
+		squirrels= game.add.group();
+		squirrel= squirrels.create(100,100,'squirrel');
+		squirrels.enableBody = true;
+		
+		
 		cursors = game.input.keyboard.createCursorKeys();
 		game.input.mouse.capture = true;
 		leftArrow = this.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -57,15 +64,18 @@ var playState={
     	
 	},
 	update: function(){
-		console.log(Math.floor(corgi.y) + ',' + Math.floor(corgi.x));//corgi.scale);
+		//console.log(Math.floor(corgi.y) + ',' + Math.floor(corgi.x));//corgi.scale);
 		distance = (corgi.y);
 		movement();
 		game.physics.arcade.collide(corgi, platforms);
+		game.physics.arcade.collide(corgi, squirrels);
+
 		//game.physics.arcade.overlap(redBubbles, redCeiling, popBubbleR, null, this);
 		corgi.scale.set(distance/500);
 		corgWrap(corgi);
 		pKey.onDown.add(toPlatform, this);
 		swapMap0(corgi);
+		circleCorg();
 	}		
 }
 function corgWrap(object) {
@@ -100,21 +110,75 @@ function movement() {
 }
 function bark() {
 	game.sound.play('bark');
+	squirrelspawn();
 }
 function growl() {
 	game.sound.play('growl');
+	squirrel.animations.stop();
 }
 function yawn() {
 	game.sound.play('yawn');
 	corgi.animations.stop();
 	corgi.frame=3;
+	squirrelspawn();
 }
 function toPlatform() {
-	this.game.state.start('platform');
+	this.game.state.start('flappyCorg');
 }
 
 function swapMap0(character) {
 	if (character.x <= 200 && character.y <= 275) {
 		this.game.state.start('platform');
+	}
+}
+var killCount = 0;
+var exists = false;
+ function squirrelspawn() {
+ 	var randomX= Math.random();
+ 	if (randomX >= .5) {
+ 		randomX = 0;
+ 	} else {
+ 		randomX = 1300;
+ 	}
+ 	var randomY= Math.random()*650;
+ 	if (randomY < 250) {
+ 		randomY += 300;
+ 	}
+ 	squirrel = squirrels.create(randomX,randomY,'squirrel');
+ 	squirrel.anchor.setTo(0.5,0.5);
+
+ 	squirrel.animations.add('leftRun', [39,40,41], 10, true);
+	squirrel.animations.add('rightRun', [32,33,34], 10, true);
+	squirrel.enableBody=true;
+	squirrel.inputEnabled=true;
+ 	game.physics.arcade.enable(squirrel);
+ 	if (randomX === 0) {
+ 		squirrel.animations.play('rightRun');
+ 		squirrel.body.velocity.x = 200;
+	} else if (randomX === 1300) {
+		squirrel.animations.play('leftRun');
+		squirrel.body.velocity.x = -200;
+	}
+ 	squirrel.scale.set(squirrel.y/250);
+ 	if (squirrels > 0){
+ 		exists = true;
+ 	} else {
+ 		exists = false;
+ 	}
+ 	squirrel.events.onInputDown.add(followNow, this);
+ }
+var corgFollowers = [];
+function followNow(s) {
+	corgFollowers.push(s);
+	//s.y = corgi.y+50;
+	//s.pivot.x = corgi.x;
+	//s.pivot.y = corgi.y;
+}
+
+function circleCorg() {
+	if (corgFollowers.length > 0) {
+		for (var i = 0; i > corgFollowers.length; i++) {
+			corgFollowers[i].rotation += 0.05;
+		}
 	}
 }
